@@ -11,9 +11,6 @@ import matplotlib.pyplot as plt
 from detectores.detectores import detect_image, detect_video
 from glob import glob
 
-# Título do app
-st.title("Detector de Pombos")
-
 # Opção de escolha entre imagem ou vídeo
 opcao = st.radio("Escolha o tipo de mídia para detectar pombos:", ("Imagem", "Vídeo","Camera"))
 

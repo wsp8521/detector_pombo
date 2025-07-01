@@ -137,3 +137,52 @@ def detect_camera():
 
     cap.release()
     st.success("Câmera encerrada.")
+
+def detector_celular():
+    ip = 'https://192.168.15.4:8080/video'  # Substitua pelo IP da sua câmera
+            
+    # Cria espaço para mostrar os frames e mensagens
+    frame_placeholder = st.empty()
+    message_placeholder = st.empty()
+
+    #Inicializar a câmera (use 0 ou 1, dependendo da sua webcam)
+    cap = cv2.VideoCapture()
+    cap.open(ip)
+
+    if not cap.isOpened():
+        st.error("Erro ao abrir a câmera")
+        return
+
+    # Botão para parar
+    stop = st.button("Parar")
+
+    while cap.isOpened():
+        ret, frame = cap.read()
+        if not ret:
+            st.warning("Erro ao capturar o frame")
+            break
+
+        # Realizar detecção (classe 0 = pessoa)
+        results = model(frame, conf=0.3, classes=[0])
+        boxes = results[0].boxes
+
+        # Verifica se encontrou alguma pessoa
+        if boxes and len(boxes) > 0:
+            message_placeholder.success("Pessoa encontrada!")
+        else:
+            message_placeholder.warning("Pessoa não encontrada.")
+
+        # Desenhar as detecções no frame
+        annotated_frame = results[0].plot()
+        annotated_frame = cv2.cvtColor(annotated_frame, cv2.COLOR_BGR2RGB)
+
+        # Exibir o frame no Streamlit
+        frame_placeholder.image(annotated_frame, channels="RGB", use_container_width=True)
+
+        if stop:
+            break
+
+        time.sleep(0.03)
+
+    cap.release()
+    st.success("Câmera encerrada.")

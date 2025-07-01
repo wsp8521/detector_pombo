@@ -8,8 +8,7 @@ import tempfile
 from PIL import Image
 import numpy as np
 import matplotlib.pyplot as plt
-from detectores.detectores import detect_image, detect_video, detect_camera
-
+from detectores.detectores import detect_image, detector_celular, detect_camera
 
 # Título do app
 st.title("Detector de Pombos")
@@ -39,6 +38,7 @@ elif opcao =="Vídeo":
         st.video(video_path)
 
 else:
-    detect_camera()
+    #detect_camera()
+    detector_celular()
        
 #
