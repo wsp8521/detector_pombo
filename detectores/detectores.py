@@ -5,10 +5,38 @@ import streamlit as st
 from ultralytics import YOLO
 import os
 import time
+import pygame
 
+import threading
+
+
+# Inicializa o pygame para tocar som
+pygame.mixer.init()
+gaviao_som = "gaviao.mp3"  # coloque o nome do arquivo de som aqui
 
 model = YOLO("yolov8n.pt")  # Modelo leve
 
+
+# Inicializa o pygame
+pygame.mixer.init()
+
+# Caminho do som
+gaviao_som = "gaviao.mp3"  # Troque isso se estiver em outra pasta
+
+def tocar_som_loop():
+    if not pygame.mixer.music.get_busy():
+        try:
+            if os.path.exists(gaviao_som):
+                pygame.mixer.music.load(gaviao_som)
+                pygame.mixer.music.play(-1)
+            else:
+                st.error(f"Arquivo de som não encontrado: {gaviao_som}")
+        except Exception as e:
+            st.error(f"Erro ao tocar som: {e}")
+
+def parar_som():
+    if pygame.mixer.music.get_busy():
+        pygame.mixer.music.stop()
 
 def detect_image(path_img, result=True):
     # Salvar a imagem em um arquivo temporário
@@ -114,14 +142,16 @@ def detect_camera():
             break
 
         # Realizar detecção (classe 0 = pessoa)
-        results = model(frame, conf=0.3, classes=[0])
+        results = model(frame, conf=0.3, classes=[14])
         boxes = results[0].boxes
 
         # Verifica se encontrou alguma pessoa
         if boxes and len(boxes) > 0:
-            message_placeholder.success("Pessoa encontrada!")
+            message_placeholder.success("Pombo encontrada!")
+            tocar_som_loop()  # ▶️ toca o som em loop
         else:
-            message_placeholder.warning("Pessoa não encontrada.")
+            message_placeholder.warning("Pombo não encontrada.")
+            parar_som()  # ⏹️ para o som se estiver tocando
 
         # Desenhar as detecções no frame
         annotated_frame = results[0].plot()
@@ -163,7 +193,7 @@ def detector_celular():
             break
 
         # Realizar detecção (classe 0 = pessoa)
-        results = model(frame, conf=0.3, classes=[0])
+        results = model(frame, conf=0.3, classes=[])
         boxes = results[0].boxes
 
         # Verifica se encontrou alguma pessoa

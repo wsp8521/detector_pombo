@@ -38,7 +38,7 @@ elif opcao =="Vídeo":
         st.video(video_path)
 
 else:
-    #detect_camera()
-    detector_celular()
+    detect_camera()
+    #detector_celular()
        
 #
